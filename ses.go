@@ -27,6 +27,7 @@ func New(ses sesiface.SESAPI) *Client {
 type Email struct {
 	From    string   // From source email
 	To      []string // To destination email(s)
+	Bcc     []string // Bcc destination email(s)
 	Subject string   // Subject text to send
 	Text    string   // Text is the text body representation
 	HTML    string   // HTMLBody is the HTML body representation
@@ -58,6 +59,10 @@ func (c *Client) SendEmail(email Email) error {
 
 	dest := &ses.Destination{
 		ToAddresses: aws.StringSlice(email.To),
+	}
+
+	if len(email.Bcc) > 0 {
+		dest.BccAddresses = aws.StringSlice(email.Bcc)
 	}
 
 	_, err := c.ses.SendEmail(&ses.SendEmailInput{
